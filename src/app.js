@@ -3,7 +3,8 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 
-const productManager = new ProductManager()
+const productManager = new ProductManager();
+productManager.loader();
 
 app.use(express.json());
 
@@ -50,7 +51,7 @@ app.put("/api/products/:pid", (req, res) =>{
             throw new Error("Ingrese un ID numerico valido");
     }
     productManager.changeProduct(id, newProd)
-    res.status(201).json({mensaje: "Producto Actualizado correctamente"})
+    res.status(200).json({mensaje: "Producto Actualizado correctamente"})
     }
     catch(error){
         res.status(400).json({error: error.message});
