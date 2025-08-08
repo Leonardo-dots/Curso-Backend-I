@@ -1,5 +1,4 @@
 // Clase para gestionar prodcutos, agregar, modificar o eliminar.
-const { error } = require("console");
 const fs = require("fs/promises");
 const path = require("path");
 
@@ -36,9 +35,9 @@ class ProductManager {
     //Agregar productos
     async addProduct(producto){
         //Validacion del producto. Que cumpla todos los campos.
-        const required = ["title", "description", "price", "thumnails", "code", "stock", "category"];
-        for(req of required){
-            if(producto[req] === undefined){
+        const required = ["title", "description", "price", "thumbnails", "code", "stock", "category"];
+        for(let req of required){
+            if(!producto[req] && producto[req] !== 0){
                 throw new Error("Todos los campos son necesarios")
             }
         }
