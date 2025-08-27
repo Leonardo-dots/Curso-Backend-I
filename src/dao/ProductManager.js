@@ -47,8 +47,14 @@ class ProductManager {
            throw new Error("No se puede agregar un producto con mismo numero de Codigo");
         }
 
+        //filtrar el producto para quedarme con los campos que quiero.
+        let prodFiltrado = {};
+        for(let campo of required){
+            prodFiltrado[campo] = producto[campo];
+        }
+
         //Crear el nuevo producto.
-        let prodFinal = {id: this.#idProduct++, ...producto}
+        let prodFinal = {id: this.#idProduct++, ...prodFiltrado}
         this.#productos.push(prodFinal);
 
         try{
@@ -57,6 +63,7 @@ class ProductManager {
         catch(error){
             console.log(error.message);
         }
+        return prodFinal;
     }
 
     // Devuelve TODOS los productos
@@ -76,17 +83,22 @@ class ProductManager {
     //Modifica un Producto.
     async changeProduct(prodId, newProd){
 
-        let productoOriginal = this.getProductByID(prodId);
+        let productoOriginal = {...this.getProductByID(prodId)}; //Uso Spread operator para copiar el objeto y poder devolverlo en el return.
 
         if (typeof newProd !== 'object' || Array.isArray(newProd) || newProd === null){
-            throw new Error("El producto no es un valor de tipo object");
+            throw new Error("El producto no es un dato de tipo object");
         }
-        if(newProd.id){
-            throw new Error("El producto no debe contener una propiedad ID");
+
+        //Nuevamente filtro el producto para quedarme con los campos que necesito.
+        const required = ["title", "description", "price", "thumbnails", "code", "stock", "category"];
+        let prodFiltrado = {};
+        for(let campo of required){
+            if(newProd[campo] !== undefined)
+            prodFiltrado[campo] = newProd[campo];
         }
-         
+
         const producto = this.#productos.find(prod => prod.id === productoOriginal.id);
-        Object.assign(producto, newProd);
+        Object.assign(producto, prodFiltrado);
 
         try{
             await fs.writeFile(this.#path, JSON.stringify(this.#productos));
@@ -94,6 +106,7 @@ class ProductManager {
         catch(error){
             console.log(error.message);
         }
+        return {productoOriginal, producto};
     }
 
 
