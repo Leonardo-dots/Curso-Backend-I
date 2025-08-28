@@ -1,18 +1,17 @@
 const {Router} = require("express");
 
 //tengo que exportar una funcion contructora del Router para poder usar la misma intancia de la clase que tengo en App y no crear distintas instancias y cada una tenga datos diferentes.
-module.exports = (productManager) => {
+module.exports = (productManager, io) => {
     const router = Router();
 
 //Acceder a todos los productos.
 router.get("/", (req, res) =>{
     const productos = productManager.getProducts();
-    res.status(200).json(productos);
+    res.status(200).render("renderProducts", {productos});
 })
 
 //Acceder a un producto por ID
 router.get("/:pid", (req, res) =>{
-    //
     const id = Number(req.params.pid);
 
     if(isNaN(id)){
@@ -21,7 +20,7 @@ router.get("/:pid", (req, res) =>{
 
     try{
         const producto = productManager.getProductByID(id);
-        res.json(producto);
+        res.render("renderProd", {producto});
     } 
     catch(error) {
         res.status(404).json({error: error.message})
@@ -33,6 +32,7 @@ router.post("/", async (req, res) =>{
     try{
         const productoAgregado = await productManager.addProduct(req.body);
         res.status(201).json({mensaje: "Producto Agregado correctamente", producto: productoAgregado});
+        io.emit("updateProducts", productManager.getProducts());
     }
     catch(error){
         if(error.message.includes("campos")){
@@ -60,6 +60,7 @@ router.put("/:pid", async (req, res) =>{
         //Modificacion del producto.
         const {productoOriginal, producto} = await productManager.changeProduct(id, newProd)
         res.status(200).json({mensaje: "Producto Actualizado correctamente", producto_original: productoOriginal, producto_modificado: producto})
+        io.emit("updateProducts", productManager.getProducts());
     }
     catch(error){
         if(error.message.includes("dato")){
@@ -79,6 +80,7 @@ router.delete("/:pid", async(req, res) =>{
         }
         const eliminado = await productManager.deleteProduct(id);
         res.status(200).json({mensaje: "haz eliminado el siguiente producto.", producto: eliminado});
+        io.emit("updateProducts", productManager.getProducts());
     }
     catch(error){
         res.status(400).json({error: error.message})
