@@ -1,0 +1,40 @@
+<h1>Lista de Productos en vivo</h1>
+
+<div class="container">
+    <ul>
+        {{#each productos}}
+        <li>Titulo: {{title}}</li>
+        <li>Description: {{description}}</li>
+        <li>Price: {{price}}</li>
+        <li>Code: {{code}}</li>
+        <li>stock: {{stock}}</li>
+        <li>category: {{category}}</li>
+        <li>Thumbnails: {{thumbnails}}</li>
+    {{/each}}
+    </ul>
+</div>
+
+<hr>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    const socket = io();
+
+    socket.on("updateProducts", (productos) =>{
+        const container = document.querySelector(".container");
+        container.innerHTML = "";
+        productos.forEach((producto, index) => {
+
+            const ul = document.createElement("ul");
+                
+            Object.entries(producto).forEach(([key, value]) => {
+                const li = document.createElement("li");
+                li.textContent = `${key}: ${value}`;
+                ul.appendChild(li);
+            });
+            container.appendChild(ul);
+        })
+    });
+
+</script>
