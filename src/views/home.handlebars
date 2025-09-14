@@ -1,0 +1,18 @@
+<h1>Bienvenido al servidor</h1>
+<p>Puede elegir diferentes rutas para poder gestionar sus necesidades, dentro del navegador solo podra realizar operaciones de tipo GET</p>
+<h2>Rutas Productos</h2>
+<ul>
+    <li>GET: "localhost:8080/api/products" para ver todos los productos</li>
+    <li>GET: "localhost:8080/api/products/:ID" ingrese un valor numerico de ID para ver un producto especifico.</li>
+    <li>POST: "localhost:8080/api/products" Para agregar un nuevo producto.</li>
+    <li>PUT: "localhost:8080/api/products/ID" para modificar un producto</li>
+    <li>DELETE: "localhost:8080/api/products" para eliminar un producto</li>
+</ul>
+<hr>
+<h2>Rutas Carritos</h2>
+<ul>
+    <li>GET: "localhost:8080/api/carts/ID" Consultar un carrito por numero de ID</li>
+    <li>POST: "localhost:8080/api/carts" Crear un nuevo carrito.</li>
+    <li>POST: "localhost:8080/api/carts/ID/product/ID" Primer id para seleccionar un carrito y segundo ID para seleccionar el producto con ID correspondiente.</li>
+</ul>
+<hr>
