@@ -28,8 +28,8 @@ module.exports = (io) => {
             const nextLink = data.hasNextPage ? `/api/products?page=${data.nextPage}&limit=${limit || 10}&sort=${sort || ""}&query=${query || ""}` : null;
 
             //devolucion del objeto
-            res.status(200).render({
-                status: "sucess",
+            res.status(200).render("index", {
+                status: "success",
                 payload: data.docs,
                 totalPages: data.totalPages,
                 prevPage: data.prevPage,

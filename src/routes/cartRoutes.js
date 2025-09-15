@@ -55,7 +55,8 @@ router.put("/:cid", async(req, res)=>{
 //Ruta para actualizar cantidad de un producto en el carrito
 router.put("/:cid/products/:pid", async(req, res)=>{
     try{
-        const cart = await CartManager.updateQuantity(req.params.cid, req.params.pid, req.body);
+        const quantity = Number(req.body.quantity)
+        const cart = await CartManager.updateQuantity(req.params.cid, req.params.pid, quantity);
         res.status(200).json({mensaje: "Cantidad de productos actualizadas", cart});
     } catch(error){
         res.status(404).json(error.message);
