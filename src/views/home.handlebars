@@ -14,5 +14,9 @@
     <li>GET: "localhost:8080/api/carts/ID" Consultar un carrito por numero de ID</li>
     <li>POST: "localhost:8080/api/carts" Crear un nuevo carrito.</li>
     <li>POST: "localhost:8080/api/carts/ID/product/ID" Primer id para seleccionar un carrito y segundo ID para seleccionar el producto con ID correspondiente.</li>
+    <li>DELETE: "localhost:8080/api/carts/ID/products/ID" Primer ID para el carrito, segundo ID para el producto a eliminar.</li>
+    <li>PUT: "localhost:8080/api/carts/ID" Ruta para actualizar un carrito completo mediante un nuevo array de productos.</li>
+    <li>PUT: "localhost:8080/api/carts/ID/products/ID" primer ID para el carrito, segundo ID para el producto al cual se le quiera modificar la cantidad, (la propiedad "qunatity" debe estar en el body de la request)</li>
+    <li>DELETE: "localhost:8080/api/carts/ID" Seleccionar un carrito para vaciarlo completamente.</li>
 </ul>
 <hr>

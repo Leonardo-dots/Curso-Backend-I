@@ -2,9 +2,27 @@ const productModel = require("../models/productModel");
 
 class ProductManager {
 
-    //devolucion todos los productos
-    static async getProducts(){
-        return await productModel.find().lean();
+    // //devolucion todos los productos
+    // static async getProducts(){
+    //     return await productModel.find().lean();
+    // }
+
+    //devolucion de los productos con paginate y uso de querys como filtros u opciones.
+    static async getProducts({page = 1, limit = 10, sort, query}){
+
+        //filtro del paginate por el parametro query
+        const filter = {};
+        if(query) filter.category = query;
+
+        //opciones del paginate
+        const options = {
+            page: Number(page),
+            limit: Number(limit),
+            sort: sort ? {price: Number(sort)} : {},
+            lean: true,
+        }
+
+        return await productModel.paginate(filter, options);
     }
 
     //devolucion un producto por ID

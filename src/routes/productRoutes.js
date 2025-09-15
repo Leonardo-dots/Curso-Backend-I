@@ -6,11 +6,40 @@ module.exports = (io) => {
 
     const router = Router();
     
-    //Devolucion de todos los productos
+    // //Devolucion de todos los productos
+    // router.get("/", async(req, res)=>{
+    //     try{
+    //         const productos = await ProductManager.getProducts();
+    //         res.status(200).render("renderProducts", {productos});
+    //     } catch(error){
+    //         res.status(500).json({error: error.message});
+    //     }
+    // })
+
+    //Devolucion de los productos por queryParams
     router.get("/", async(req, res)=>{
         try{
-            const productos = await ProductManager.getProducts();
-            res.status(200).render("renderProducts", {productos});
+            //desestructuracion de datos
+            const { page, limit, sort, query } = req.query
+            const data = await ProductManager.getProducts({page, limit, sort, query});
+
+            //creando links para botones "back" y "next"
+            const prevLink = data.hasPrevPage ? `/api/products?page=${data.prevPage}&limit=${limit || 10}&sort=${sort || ""}&query=${query || ""}` : null;
+            const nextLink = data.hasNextPage ? `/api/products?page=${data.nextPage}&limit=${limit || 10}&sort=${sort || ""}&query=${query || ""}` : null;
+
+            //devolucion del objeto
+            res.status(200).render({
+                status: "sucess",
+                payload: data.docs,
+                totalPages: data.totalPages,
+                prevPage: data.prevPage,
+                nextPage: data.nextPage,
+                page: data.page,
+                hasPrevPage: data.hasPrevPage,
+                hasNextPage: data.hasNextPage,
+                prevLink,
+                nextLink,
+            });
         } catch(error){
             res.status(500).json({error: error.message});
         }
@@ -46,7 +75,7 @@ module.exports = (io) => {
         try{
             const prodActualizado = await ProductManager.changeProduct(req.params.pid, req.body);
 
-            //Emision de evento para actualizar el sitio con conexion webScoket.
+            //Emision de evento para actualizar el sitio con conexion WebScoket.
             io.emit("updateProduct", await ProductManager.getProducts());
 
 

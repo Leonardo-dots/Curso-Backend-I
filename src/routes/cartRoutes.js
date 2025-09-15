@@ -15,8 +15,8 @@ router.post("/", async(req, res)=>{
 //Ruta para encontrar un carrito por ID
 router.get("/:cid", async(req, res)=>{
     try{
-        const cartfound = await CartManager.getCartById(req.params.cid);
-        res.status(200).json({cartfound});
+        const cartFound = await CartManager.getCartById(req.params.cid);
+        res.status(200).render("cartView", {cartFound});
     } catch(error){
         res.status(404).json({error: error.message});
     }
