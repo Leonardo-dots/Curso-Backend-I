@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const ProductManager = require("../dao/ProductManager");
+const passport = require("passport");
 
 //Exporto el router y pido un IO para usarlo en las rutas
 module.exports = (io) => {
@@ -17,7 +18,7 @@ module.exports = (io) => {
     // })
 
     //Devolucion de los productos por queryParams
-    router.get("/", async(req, res)=>{
+    router.get("/", passport.authenticate("jwt", { session: false }), async(req, res)=>{
         try{
             //desestructuracion de datos
             const { page, limit, sort, query } = req.query
@@ -46,7 +47,7 @@ module.exports = (io) => {
     })
 
     //devolucion de producto por ID
-    router.get("/:pid", async(req, res) =>{
+    router.get("/:pid", passport.authenticate("jwt", { session: false }), async(req, res) =>{
         try{
             const id = req.params.pid;
             const producto = await ProductManager.getProductById(id);
@@ -57,7 +58,7 @@ module.exports = (io) => {
     })
 
     //Agregar un Producto
-    router.post("/", async(req, res)=>{
+    router.post("/",passport.authenticate("jwt", { session: false }), async(req, res)=>{
         try{
             const productoAgregado = await ProductManager.addProduct(req.body);
 
@@ -71,7 +72,7 @@ module.exports = (io) => {
     })
 
     //Modificar un producto
-    router.put("/:pid", async(req, res)=>{
+    router.put("/:pid",passport.authenticate("jwt", { session: false }), async(req, res)=>{
         try{
             const prodActualizado = await ProductManager.changeProduct(req.params.pid, req.body);
 
@@ -86,7 +87,7 @@ module.exports = (io) => {
     })
 
     //Eliminar un producto
-    router.delete("/:pid", async(req, res) =>{
+    router.delete("/:pid", passport.authenticate("jwt", { session: false }), async(req, res) =>{
         try{
             const deleted = await ProductManager.deleteProduct(req.params.pid);
 

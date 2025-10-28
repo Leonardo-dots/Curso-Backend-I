@@ -3,9 +3,15 @@ const path = require("path");
 const http = require("http");
 const mongoose = require("mongoose");
 const { Server } = require("socket.io");
-const {engine} = require("express-handlebars");
+const { engine } = require("express-handlebars");
+const passport = require("passport");
+const passportConfig = require("./config/passportConfig");
+const cookieParser = require("cookie-parser");
+
+//import Rutas
+const productManager = require("./dao/ProductManager");
 const cartRoutes = require("./routes/cartRoutes");
-const ProductManager = require("./dao/ProductManager");
+const loginRoutes = require("./routes/loginRoutes");
 
 //inicializacion del servidor.
 const app = express();
@@ -29,10 +35,16 @@ const productRoutes = require("./routes/productRoutes")(io);
 
 //Middlewares
 app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(passport.initialize());
+app.use(cookieParser());
 
 //Routes
+app.use("/api/sessions", loginRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
+
 
 //Config handlebars
 app.engine("handlebars", engine());
@@ -49,16 +61,21 @@ io.on("connection", (socket)=>{
 });
 
 app.get("/", (req, res) =>{
-    res.render("home")
+    res.render("login");
+})
+
+app.get("/api/home", passport.authenticate("jwt", {session: false}), (req, res)=>{
+    res.render("home");
 })
 
 app.get("/realTimeProducts", async(req, res)=>{
     try{
-        const productos = await ProductManager.getProducts();
+        const productos = await productManager.getProducts();
         res.status(200).render("realTimeProducts", {productos});
     } catch(error){
         res.status(500).json({error: error.message});
     }
 })
 
+// Ponemos a escuchar el servidor.
 server.listen(PORT, ()=> console.log(`Servidor corriendo en localhost:${PORT}`));
